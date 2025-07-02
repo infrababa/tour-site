@@ -19,6 +19,7 @@ jobs:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_SSH_KEY }}
+        port: 22
         script: |
           # Clone or pull the latest code
           cd /var/www/html
@@ -29,7 +30,7 @@ jobs:
           else
             # First time - clone the repo
             sudo rm -rf *
-            sudo git clone https://github.com/tour-site.git .
+            sudo git clone https://github.com/${{ github.repository }}.git .
           fi
           
           # Set proper permissions for nginx
