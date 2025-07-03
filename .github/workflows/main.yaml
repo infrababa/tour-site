@@ -1,3 +1,54 @@
+# name: Deploy to Nginx
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     - name: Checkout code
+#       uses: actions/checkout@v3
+
+#     - name: Execute remote SSH commands using SSH key
+#       uses: appleboy/ssh-action@v1
+#       with:
+#         host: ${{ secrets.EC2_HOST }}
+#         username: ${{ secrets.EC2_USER }}
+#         key: ${{ secrets.EC2_SSH_KEY }}
+#         script: |
+#           set -e  # Exit on error
+          
+#           # Ensure git is available
+#           if ! command -v git &> /dev/null; then
+#             sudo apt update && sudo apt install -y git
+#           fi
+
+#           # Prepare directory
+#           cd /var/www/html
+#           sudo chown -R $USER:$USER /var/www/html
+
+#           if [ -d ".git" ]; then
+#             echo "Repo exists, pulling latest..."
+#             git pull origin main
+#           else
+#             echo "Cloning fresh..."
+#             sudo find /var/www/html -mindepth 1 -delete
+#             git clone https://${{ secrets.PRIVATE_TOKEN }}@github.com/infrababa/tour-site.git .
+#           fi
+
+#           # Permissions
+#           sudo chown -R www-data:www-data /var/www/html
+#           sudo chmod -R 755 /var/www/html
+
+#           sudo nginx -t && sudo systemctl reload nginx
+#           echo "Deployment completed!"
+
+
+
 name: Deploy to Nginx
 
 on:
@@ -20,35 +71,36 @@ jobs:
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
-          set -e  # Exit on error
-          
-          # Ensure git is available
+          set -e  # Exit immediately if a command fails
+
+          echo "✅ Checking for git installation..."
           if ! command -v git &> /dev/null; then
             sudo apt update && sudo apt install -y git
           fi
 
-          # Prepare directory
+          echo "📁 Preparing deployment directory..."
           cd /var/www/html
           sudo chown -R $USER:$USER /var/www/html
 
           if [ -d ".git" ]; then
-            echo "Repo exists, pulling latest..."
+            echo "🔄 Repository exists. Resetting and pulling latest changes..."
+            git reset --hard HEAD
+            git clean -fd
             git pull origin main
           else
-            echo "Cloning fresh..."
+            echo "📦 No existing repo. Cloning fresh..."
             sudo find /var/www/html -mindepth 1 -delete
             git clone https://${{ secrets.PRIVATE_TOKEN }}@github.com/infrababa/tour-site.git .
           fi
 
-          # Permissions
+          echo "🔧 Setting file permissions..."
           sudo chown -R www-data:www-data /var/www/html
           sudo chmod -R 755 /var/www/html
 
+          echo "🔁 Reloading NGINX..."
           sudo nginx -t && sudo systemctl reload nginx
-          echo "Deployment completed!"
 
-
-
+          echo "✅ Deployment completed successfully!"
 
 
 
