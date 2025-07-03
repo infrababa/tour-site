@@ -37,7 +37,7 @@ jobs:
           else
             echo "Cloning fresh..."
             sudo find /var/www/html -mindepth 1 -delete
-            git clone git@github.com:infrababa/tour-site.git .
+            git clone https://${{ secrets.PRIVATE_KEY }}@github.com/infrababa/tour-site.git .
           fi
 
           # Permissions
@@ -86,4 +86,3 @@ jobs:
 
 
 
-    
