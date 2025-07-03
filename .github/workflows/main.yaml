@@ -13,7 +13,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Deploy to Ec2
+    - name: Execute remote SSH commands using SSH key
       uses: appleboy/ssh-action@v1
       with:
         host: ${{ secrets.EC2_HOST }}
@@ -46,12 +46,6 @@ jobs:
 
           sudo nginx -t && sudo systemctl reload nginx
           echo "Deployment completed!"
-
-
-
-
-
-
 
 
 
