@@ -29,7 +29,7 @@ jobs:
           else
             # First time - clone the repo
             sudo rm -rf *
-            sudo git clone https://github.com/tour-site.git .
+            sudo git clone https://github.com/infrababa/tour-site.git .
           fi
           
           # Set proper permissions for nginx
